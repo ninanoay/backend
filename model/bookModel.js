@@ -1,4 +1,4 @@
-import pool from '../cnnfig/db.js';
+import pool from '../config/db.js';
 
 //Retrieve
 export const fetch = async () => {
