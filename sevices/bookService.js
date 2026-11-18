@@ -1,24 +1,66 @@
 import * as bookModel from '../model/bookModel.js';
 
-export const fetchAllBooks = async()=>{
-    const books = await bookmModel.fetch();
+export const fetchAllBooks = async() => {
+    const books = await bookModels.fetch();
     return books;
 }
 
-export const createBook = async (book) => {
-    const bookId = await bookModel.insert(book);
+
+const doesbookExist = async(book) => {
+    let existing;
+    if(Object.hasOwn(book, "id")){
+        existing = await bookModels.findBookById(book.id);
+    }else{
+        existing = await bookModels.findBookByNameAndAuthor(book.name, book.author);
+    }
+
+    if(existing.length > 0) {
+        return true;
+    }
+    
+    return false;
+}
+
+export const createBook = async(book) =>{
+    if(!book.name || !book.author){
+        throw new Error ('Name and Author is required');       
+    }
+
+    const existing = await doesbookExist(book);
+
+    if(existing){
+        throw new Error ('Book already exist!');
+    }
+    const bookId = await bookModels.insert(book);
     return bookId;
 }
 
-export const update = async (book) => {
-    const [result] = await pool.query(
-        "UPDATE book SET name = ?, author = ? WHERE id = ?",
-        [book.name, book.author, book.id]
-    );
-    return result.affectedRows;
+//upsdate
+export const updateBook = async(book) =>{
+     if(!book.name || !book.author){
+        throw new Error ('Name and Author is required');       
+    }
+
+    const existing = await doesbookExist(book);
+
+    if(!existing){
+        throw new Error ('Book does not exist!');
+    }
+
+    const updatedBook = await bookModels.update(book);
+    return updatedBook;
 }
 
-export const deleteBook = async (id) => {
-    const deletedBook = await bookModel.remove(id);
+//DELET
+export const deleteBook = async(id) =>{
+    const book = {id};
+
+    const existing = await doesbookExist(book);
+
+      if(!existing){
+        throw new Error ('Book does not exist!');
+    }
+    
+    const deletedBook = await bookModels.remove(id);
     return deletedBook;
 }

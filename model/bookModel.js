@@ -1,31 +1,50 @@
 import pool from '../config/db.js';
-export const fetch = async () => {
-    const [rows] = await pool.query('SELECT * FROM book');
+
+
+//retrieve
+export const fetch = async() => {
+    const [rows] = await pool.query("SELECT * FROM book");
     return rows;
- };
- 
- export const insert = async (book) => {
-   const [result] = await pool.query(
-      "INSERT INTO book (title, author) VALUES (?, ?)",
-      [book.name, book.author]
-   );
+};
 
-   return result.insertId;
- }
- 
- export const update = async (book) => {
-      const [result] = await pool.query(
-         "UPDATE book SET name = ?, author = ? WHERE id = ?",
-         [book.name, book.author, book.id]
-      );
-      return result.affectedRows;
-  }
 
-  export const remove = async (id) => {
+export const findBookByNameAndAuthor = async (name, author) =>{
+    const [rows] = await pool.query("SELECT * FROM book WHERE name = ? AND author = ?",
+    [name, author]
+);
+    return rows;
+}
+
+export const findBookById = async (id) => {
+  const [rows] = await pool.query("SELECT * FROM book WHERE id = ?",
+    [id]
+);
+    return rows;
+}
+
+//insert
+export const insert = async (book) =>{
     const [result] = await pool.query(
-        "DELETE FROM book WHERE id = ?",
-        [id]
-      
+        "INSERT INTO book(name, author) VALUES (?, ?)",
+        [book.name, book.author]
     );
-    return result.affectedRows;
- }
+
+    return result.insertId;
+}
+
+//update
+export const update = async (book) => {
+  const [result] = await pool.query (
+    "UPDATE book SET name= ?, author= ? WHERE id= ? ",
+    [book.name, book.author, book.id]
+  );
+  return result.affectedRows;
+}
+
+//delete
+export const remove = async (id) => {
+  const [result] = await pool.query (
+    "DELETE FROM book WHERE id= ?", [id]
+  );
+  return result.affectedRows
+}
