@@ -1,7 +1,7 @@
-import * as studentService from '../sevices/bookService.js';
+import * as studentService from '../services/studentService.js';
 
  export const fetchAllStudents = async (req, res) => {
-     const students = await bookService.fetchAllStudents();
+     const students = await studentService.fetchAllStudents();
      res.status(200).json(students);
  } 
  
@@ -12,7 +12,7 @@ import * as studentService from '../sevices/bookService.js';
     const student = { name, age };
 
     try{
-        const studentID = await studentService.insertStudent(student);
+        const studentID = await studentService.createStudent(student);
         res.status(200).json({
             success: true,
             message: studentID
